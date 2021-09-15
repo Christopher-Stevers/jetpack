@@ -19,9 +19,7 @@ import PublicizeFormUnwrapped from '../form-unwrapped';
 const PublicizeForm = compose( [
 	withSelect( select => {
 		return {
-			connections: select( 'core/editor' ).getEditedPostAttribute(
-				'jetpack_publicize_connections'
-			),
+			connections: select( 'jetpack/publicize' ).getConnections(),
 			shareMessage: select( 'jetpack/publicize' ).getShareMessage(),
 			maxLength: select( 'jetpack/publicize' ).getShareMessageMaxLength(),
 		};
