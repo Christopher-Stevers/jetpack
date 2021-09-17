@@ -51,18 +51,20 @@ class PublicizeFormUnwrapped extends Component {
 		return (
 			<div id="publicize-form">
 				<ul className="jetpack-publicize__connections-list">
-					{ connections.map( ( { display_name, id, service_name, profile_picture } ) => (
-						<PublicizeConnection
-							//disabled={ ! toggleable }
-							//enabled={ enabled }
-							key={ id }
-							id={ id }
-							label={ display_name }
-							name={ service_name }
-							toggleConnection={ toggleConnection }
-							picture={ profile_picture }
-						/>
-					) ) }
+					{ connections.map(
+						( { display_name, enabled, id, service_name, profile_picture, toggleable } ) => (
+							<PublicizeConnection
+								disabled={ ! toggleable }
+								enabled={ enabled }
+								key={ id }
+								id={ id }
+								label={ display_name }
+								name={ service_name }
+								toggleConnection={ toggleConnection }
+								picture={ profile_picture }
+							/>
+						)
+					) }
 				</ul>
 				<PublicizeSettingsButton refreshCallback={ refreshCallback } />
 				{ connections.some( connection => connection.enabled ) && (
