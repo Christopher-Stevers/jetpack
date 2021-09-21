@@ -8,6 +8,7 @@
 namespace Automattic\Jetpack\Connection;
 
 use Automattic\Jetpack\Constants;
+use Automattic\Jetpack\Identity_Crisis;
 
 /**
  * The Client class that is used to connect to WordPress.com Jetpack API.
@@ -23,11 +24,44 @@ class Client {
 	 * @return array|WP_Error WP HTTP response on success
 	 */
 	public static function remote_request( $args, $body = null ) {
+		if ( ! empty( $args['url'] ) ) {
+			$args['url'] = self::add_idc_query_args( $args['url'] );
+		}
+
 		$result = self::build_signed_request( $args, $body );
 		if ( ! $result || is_wp_error( $result ) ) {
 			return $result;
 		}
+
 		return self::_wp_remote_request( $result['url'], $result['request'] );
+	}
+
+	/**
+	 * Returns a url which includes the IDC query arguments.
+	 *
+	 * @param string $url The request url.
+	 *
+	 * @return string The request url including the IDC query arguments.
+	 */
+	private static function add_idc_query_args( $url ) {
+		if ( ! $url ) {
+			return;
+		}
+
+		$query_args = array(
+			'home'    => Urls::home_url(),
+			'siteurl' => Urls::site_url(),
+		);
+
+		if ( Identity_Crisis::sync_idc_optin() ) {
+			$query_args['idc'] = true;
+		}
+
+		if ( \Jetpack_Options::get_option( 'migrate_for_idc', false ) ) {
+			$query_args['migrate_for_idc'] = true;
+		}
+
+		return add_query_arg( $query_args, $url );
 	}
 
 	/**
